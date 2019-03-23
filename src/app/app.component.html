@@ -1,21 +1,62 @@
-<!--The content below is only a placeholder and can be replaced.-->
-<div style="text-align:center">
-  <h1>
-    Welcome to {{ title }}!
-  </h1>
-  <img width="300" alt="Angular Logo" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNTAgMjUwIj4KICAgIDxwYXRoIGZpbGw9IiNERDAwMzEiIGQ9Ik0xMjUgMzBMMzEuOSA2My4ybDE0LjIgMTIzLjFMMTI1IDIzMGw3OC45LTQzLjcgMTQuMi0xMjMuMXoiIC8+CiAgICA8cGF0aCBmaWxsPSIjQzMwMDJGIiBkPSJNMTI1IDMwdjIyLjItLjFWMjMwbDc4LjktNDMuNyAxNC4yLTEyMy4xTDEyNSAzMHoiIC8+CiAgICA8cGF0aCAgZmlsbD0iI0ZGRkZGRiIgZD0iTTEyNSA1Mi4xTDY2LjggMTgyLjZoMjEuN2wxMS43LTI5LjJoNDkuNGwxMS43IDI5LjJIMTgzTDEyNSA1Mi4xem0xNyA4My4zaC0zNGwxNy00MC45IDE3IDQwLjl6IiAvPgogIDwvc3ZnPg==">
-</div>
-<h2>Here are some links to help you start: </h2>
-<ul>
-  <li>
-    <h2><a target="_blank" rel="noopener" href="https://angular.io/tutorial">Tour of Heroes</a></h2>
-  </li>
-  <li>
-    <h2><a target="_blank" rel="noopener" href="https://angular.io/cli">CLI Documentation</a></h2>
-  </li>
-  <li>
-    <h2><a target="_blank" rel="noopener" href="https://blog.angular.io/">Angular blog</a></h2>
-  </li>
-</ul>
+<nav class="navbar navbar-expand-lg navbar-light bg-light d-flex justify-content-between align-items-center">
+  <a class="navbar-brand" href="#">Real Estate Agency</a>
+  <button *ngIf="currentAccountIsOwner" (click)="transferEarnings()" class="btn btn-outline-success my-2 my-sm-0"
+    type="submit">Recuperar ganancias
+  </button>
+</nav>
 
-<router-outlet></router-outlet>
+<div class="jumbotron">
+  <p><strong>Cuenta:</strong> {{currentAccount}} </p>
+  <p *ngIf="currentAccountIsOwner"><strong>Rol:</strong> Inmobiliaria </p>
+  <p *ngIf="!currentAccountIsOwner"><strong>Rol:</strong> Arrendatario </p>
+  <p><strong>Balance de mi cuenta:</strong> {{accountBalance}} ether</p>
+  <p *ngIf="currentAccountIsOwner"><strong>Balance del contrato:</strong> {{realStateBalance}} ether</p>
+  <p *ngIf="!currentAccountIsOwner">Mi nombre: <input type="text" class="input" [(ngModel)]="renterName" /> </p>
+</div>
+
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-md-6 mb-5">
+      <div class="page-header">
+        <h5 class="mb-4">Pisos en alquiler:</h5>
+      </div>
+      <ul class="list-group">
+        <li *ngFor="let flat of allFlats" class="list-group-item d-flex justify-content-between align-items-center">
+          {{flat.name}} <span class="d-flex justify-end align-items-center"> {{toEther(flat.price)}} ether
+            ({{flat.depositNumberRequired}} fianzas)
+            <span *ngIf="!currentAccountIsOwner" (click)="rentFlat(flat,renterName)"
+              class="btn btn-outline-success ml-3">Alquilar</span></span>
+        </li>
+      </ul>
+    </div>
+    <div class="col-md-6 mb-5" *ngIf="!currentAccountIsOwner">
+      <div class="page-header">
+        <h5 class="mb-4">Pisos alquilados:</h5>
+      </div>
+      <ul class="list-group">
+        <li *ngIf="rentedFlat.id != 0" class="list-group-item d-flex justify-content-between align-items-center">
+          {{rentedFlat.name}}
+          <span class="d-flex justify-end align-items-center">{{toEther(rentedFlat.price)}} ether
+            <span (click)="payRent(rentedFlat.price)" class="btn btn-outline-success ml-3">
+              Pagar renta
+            </span>
+          </span>
+        </li>
+      </ul>
+    </div>
+    <div class="col-md-6" *ngIf="currentAccountIsOwner">
+      <div class="page-header">
+        <h5 class="mb-4">Pisos alquilados:</h5>
+      </div>
+      <ul class="list-group">
+        <li *ngFor="let flat of allFlatsRented"
+          class="list-group-item d-flex justify-content-between align-items-center">
+          {{flat.name}} - {{toEther(flat.price)}} ether
+          <span *ngIf="currentAccountIsOwner" (click)="finishRent(flat.id)" class="btn btn-outline-success">
+            Fin de contrato
+          </span>
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>
